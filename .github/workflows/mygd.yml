@@ -1,4 +1,4 @@
-name: Padavan编译 MT7620_固定
+name: Padavan编译 MT7620_测试
 
 on: 
   release:
@@ -54,8 +54,6 @@ jobs:
         cd trunk
         for m in $TNAME;
         do
-        [ -e APms ] && echo \#"define BOARD_ROLE_REPEATER        1" >> configs/boards/"$m"/board.h
-        [ -e APms ] && cp -f configs/boards/"$m"/board.h ../../Padavan/"$m"_board.h
         sed -i "s/^CONFIG_TOOLCHAIN_DIR=.*$/CONFIG_TOOLCHAIN_DIR=${CONFIG_TOOLCHAIN_DIR}/g" .config
         sudo ./clear_tree_simple
         sudo ./build_firmware_bkye $m
