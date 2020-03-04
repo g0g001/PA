@@ -1,0 +1,69 @@
+name: Padavan编译 MT7620_固定
+
+on: 
+  release:
+    types: [published]
+  push:
+    branches: 
+      - master
+    paths:
+      - 'my.config'
+#  push:
+#    tags:
+#    - 'v*'
+  #  branches: 
+  #    - master
+#  schedule:
+#    - cron: 0 17 * * 4
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: 部署系统
+      uses: actions/checkout@master
+    - name: 安装软件
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        #sudo apt-get update
+        sudo apt-get -y install unzip libtool-bin curl cmake gperf gawk flex bison nano xxd \
+        cpio git python-docutils gettext automake autopoint texinfo build-essential help2man \
+        pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev \
+        gcc-multilib
+    - name: 下载源码
+      run: |
+        mkdir -p Padavan
+        git clone https://github.com/chongshengB/rt-n56u.git
+        cd rt-n56u/toolchain-mipsel
+        mkdir -p toolchain-3.4.x
+        wget https://github.com/hanwckf/padavan-toolchain/releases/download/v1.0/mipsel-linux-uclibc.tar.xz
+        tar -xvf mipsel-linux-uclibc.tar.xz -C toolchain-3.4.x
+    - name: 编译固件
+      env:
+#        TNAME: "PSG1208 PSG1218 PSG712 NEWIFI-MINI MI-MINI MI-3 OYE-001 YK-L1 JCG-AC836M 5K-W20"
+        TNAME: "PSG1218"
+      run: |
+        cd rt-n56u
+        sudo rm -f trunk/.config
+        mv -f ../my.config trunk/.config
+        sudo chmod 777 trunk/.config
+        cwd=`pwd`
+        CONFIG_TOOLCHAIN_DIR=${cwd//\//\\\/}\\/toolchain-mipsel
+        cd trunk
+        for m in $TNAME;
+        do
+        [ -e APms ] && echo \#"define BOARD_ROLE_REPEATER        1" >> configs/boards/"$m"/board.h
+        [ -e APms ] && cp -f configs/boards/"$m"/board.h ../../Padavan/"$m"_board.h
+        sed -i "s/^CONFIG_TOOLCHAIN_DIR=.*$/CONFIG_TOOLCHAIN_DIR=${CONFIG_TOOLCHAIN_DIR}/g" .config
+        sudo ./clear_tree_simple
+        sudo ./build_firmware_bkye $m
+        sudo mv -f images/*.trx ../../Padavan/
+        cp -f .config ../../Padavan/"$m".config
+        done
+    - name : 上传固件
+      uses: actions/upload-artifact@master
+      with:
+        name: Padavan-MT7620_gd
+        path: Padavan
