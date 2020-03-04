@@ -58,7 +58,7 @@ jobs:
         [ -e APms ] && cp -f configs/boards/"$m"/board.h ../../Padavan/"$m"_board.h
         sed -i "s/^CONFIG_TOOLCHAIN_DIR=.*$/CONFIG_TOOLCHAIN_DIR=${CONFIG_TOOLCHAIN_DIR}/g" .config
         sudo ./clear_tree_simple
-        sudo ./build_firmware_bkye $m
+        sudo ./build_firmware_modify $m
         sudo mv -f images/*.trx ../../Padavan/
         cp -f .config ../../Padavan/"$m".config
         done
