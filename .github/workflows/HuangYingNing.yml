@@ -43,9 +43,9 @@ jobs:
         tar -xvf mipsel-linux-uclibc.tar.xz -C toolchain-3.4.x
     - name: 编译固件
       run: |
-        sudo rm trunk/configs/tomplates/PSG1218.config
-        cp HuangYingNing trunk/configs/tomplates/PSG1218.config
-        sudo chmod 777 trunk/configs/tomplates/PSG1218.config
+        sudo rm /opt/rt-n56u/trunk/configs/templates/PSG1218.config
+        cp HuangYingNing /opt/rt-n56u/trunk/configs/templates/PSG1218.config
+        sudo chmod 777 /opt/rt-n56u/trunk/configs/templates/PSG1218.config
         cd /opt/rt-n56u/trunk
         sudo ./clear_tree
         sudo ./build_firmware_modify PSG1218
