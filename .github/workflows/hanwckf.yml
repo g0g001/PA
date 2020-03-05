@@ -44,7 +44,7 @@ jobs:
     - name: 编译固件
       run: |
         sudo rm /opt/rt-n56u/trunk/configs/templates/PSG1218.config
-        cp HuangYingNing /opt/rt-n56u/trunk/configs/templates/PSG1218.config
+        cp hanwckf /opt/rt-n56u/trunk/configs/templates/PSG1218.config
         sudo chmod 777 /opt/rt-n56u/trunk/configs/templates/PSG1218.config
         cd /opt/rt-n56u/trunk
         sudo ./clear_tree
