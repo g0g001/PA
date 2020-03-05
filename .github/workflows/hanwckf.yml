@@ -1,0 +1,58 @@
+name: Padavan编译MT7620 HuangYingNing 
+
+on: 
+  release:
+    types: [published]
+  push:
+    branches: 
+      - master
+    paths:
+      - 'hanwckf'
+#  push:
+#    tags:
+#    - 'v*'
+  #  branches: 
+  #    - master
+#  schedule:
+#    - cron: 0 17 * * 4
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: 部署系统
+      uses: actions/checkout@master
+    - name: 安装软件
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        #sudo apt-get update
+        sudo apt-get -y install unzip libtool-bin curl cmake gperf gawk flex bison nano xxd \
+        cpio git python-docutils gettext automake autopoint texinfo build-essential help2man \
+        pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev \
+        gcc-multilib
+    - name: 下载源码
+      run: |
+        mkdir -p /opt/Padavan
+        mkdir -p /opt/rt-n56u
+        git clone --depth=1 https://gitee.com/hanwckf/rt-n56u.git /opt/rt-n56u
+        cd /opt/rt-n56u/toolchain-mipsel
+        mkdir -p toolchain-3.4.x
+        wget https://github.com/hanwckf/padavan-toolchain/releases/download/v1.0/mipsel-linux-uclibc.tar.xz
+        tar -xvf mipsel-linux-uclibc.tar.xz -C toolchain-3.4.x
+    - name: 编译固件
+      run: |
+        sudo rm /opt/rt-n56u/trunk/configs/templates/PSG1218.config
+        cp HuangYingNing /opt/rt-n56u/trunk/configs/templates/PSG1218.config
+        sudo chmod 777 /opt/rt-n56u/trunk/configs/templates/PSG1218.config
+        cd /opt/rt-n56u/trunk
+        sudo ./clear_tree
+        sudo ./build_firmware_modify PSG1218
+        sudo mv -f images/*.trx /opt/Padavan/
+        cp -f .config /opt/Padavan/1218.config
+    - name : 上传固件
+      uses: actions/upload-artifact@master
+      with:
+        name: Padavan-MT7620_h
+        path: /opt/Padavan
