@@ -1,4 +1,4 @@
-name: Padavan编译PSG1218 HuangYingNing 
+name: Padavan编译PSG1218 chongshengB 
 
 on: 
   release:
@@ -7,7 +7,7 @@ on:
     branches: 
       - master
     paths:
-      - 'HuangYingNing'
+      - 'chongshengB'
 #  push:
 #    tags:
 #    - 'v*'
@@ -36,7 +36,7 @@ jobs:
       run: |
         mkdir -p /opt/Padavan
         mkdir -p /opt/rt-n56u
-        git clone https://github.com/HuangYingNing/rt-n56u.git /opt/rt-n56u
+        git clone https://github.com/chongshengB/rt-n56u.git /opt/rt-n56u
         cd /opt/rt-n56u/toolchain-mipsel
         ./clean_toolchain
         ./build_toolchain
